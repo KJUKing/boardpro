@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+		PUBLIC "-//mybatis.org/DTD Config 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- DB연결에 사용할 properties파일에 대한 정보를 알려준다. -->
+	<properties resource="kr/or/ddit/mybatis/config/dbinfo.properties"/>
+	
+	<!-- 기본 셋팅 값들 -->
+	<settings>
+		<!-- 데이터가 null이 전달되면 빈 칸으로 인식하지 말고 null로 인식하라  -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	
+	<!-- 사용할 VO객체의 별칭 설정하기  -->
+	<!-- 원래 VO객체를 사용할 때는 해당 객체의 전체 이름(패키지명까지 포함된 이름)을
+	     사용해야 하는데 이렇게 되면 이름이 너무 길어질 수 있다. 긴 이름 대신 사용할 별칭을 설정한다.  -->
+	<!--
+	 
+	<typeAliases>
+		<typeAlais type="패키명이 포함된 전체이름" alias="별칭이름"/>
+	</typeAliases>
+	-->
+	<typeAliases>
+		<typeAlias type="kr.or.ddit.member.vo.MemberVO" alias="memberVO"/>
+		<typeAlias type="kr.or.ddit.member.vo.ZipVO" alias="zipVO"/>
+
+	</typeAliases>
+	
+	 
+	<!-- DB에 접속 설정 -->
+	<environments default="oracleDev">
+		<environment id="oracleDev">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${user}"/>
+				<property name="password" value="${pass}"/>
+			</dataSource>
+		</environment>
+		
+	</environments> 
+	 
+	<!--
+		SQL문이 저장된 xml문서를 따로 작성하는데 이 문서를 이곳에 등록한다. 
+		
+	<mappers>
+		<mapper resource="경로명/파일명.xml">
+	</mappers>	
+	--> 
+	<mappers>
+		<mapper resource="kr/or/ddit/mybatis/mappers/member.xml"/>
+	</mappers>
+	
+
+</configuration>		
+
