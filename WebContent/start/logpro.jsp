@@ -13,11 +13,11 @@
 	/*  $(document).on('click', '#logout', () => { */
 	$('#logout').on('click', ()=>{		 
 		 $.ajax({
-			url : `${mypath}/LogOutPro.do`,
+			url : `${mypath}/logOutPro.do`,
 			type : 'get',
 			success : function(res){
 				
-				location.href="/boardlogpro/start/index.jsp";
+				location.href="/boardpro/start/index.jsp";
 			},
 			error : function(xhr){
 				alert("상태 : " + xhr.status);  //200 : json형태오류  404 : FileNotFound

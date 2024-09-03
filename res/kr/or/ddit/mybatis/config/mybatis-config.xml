@@ -24,7 +24,8 @@
 	<typeAliases>
 		<typeAlias type="kr.or.ddit.member.vo.MemberVO" alias="memberVO"/>
 		<typeAlias type="kr.or.ddit.member.vo.ZipVO" alias="zipVO"/>
-
+		<typeAlias type="kr.or.ddit.board.vo.BoardVO" alias="boardVO"/>
+		<typeAlias type="kr.or.ddit.board.vo.ReplyVO" alias="replyVO"/>
 	</typeAliases>
 	
 	 
@@ -51,6 +52,7 @@
 	--> 
 	<mappers>
 		<mapper resource="kr/or/ddit/mybatis/mappers/member.xml"/>
+		<mapper resource="kr/or/ddit/mybatis/mappers/board.xml"/>
 	</mappers>
 	
 

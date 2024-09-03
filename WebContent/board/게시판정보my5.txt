@@ -1,0 +1,142 @@
+﻿1. html(jsp)요청페이지(클라이언트)
+   각 기능에 대한 이벤트 처리 - 필요한(전송할)데이타를 수집한다
+   board.js파일의  script함수를 호출한다
+ 
+2.  board.js - 서버로 전송한다 -  
+    script함수내애서  비동기 함수를 실행한다 -  fetch() 또는 ajax() - 
+
+3.  controller - service- dao -mapper를 통해서 db 처리한다
+ db에서 수행된 결과를 역으로 return 하고 controller에서  결과값을 저장한다 
+ forward 를 이용하여 view페이지로 이동한다 -
+
+4.  view페이지에서  결과값(controller에서저장한) 을 꺼내서 응답결과를 생성한다 -
+   json()형태로 작성( html, text, xml 도 가능) 
+
+5. 서버로부터 응답결과를 받는다 -  
+     board.js파일  의   비동기 함수 
+    fetch() 의 then( function(res) )  또는 ajax()의- success : function(res) 로 
+ 응답결과를 받아서 출력한다
+
+ 사용자 생성
+SQL> conn /as sysdba
+SQL> create user project identified by project;
+SQL> grant connect, resource to project;
+
+create table boardtab (
+num			number	             not null	primary key,
+subject			varchar2(50)	not null,
+writer			varchar2(15)	not null,
+mail			varchar2(30),
+password		             varchar2(10)	not null,
+content			varchar2(2000),
+hit			number		not null,
+wip			char(15)		not null,
+wdate			date		not null
+);
+
+create table replytab(
+renum  number              not null primary key,
+bonum  number              not null,
+name   varchar2(15)        not null,
+cont   varchar2(1000)      not null,
+redate   date			  not null,
+CONSTRAINT REPLY_BONUM FOREIGN KEY(BONUM)
+REFERENCES BOARDTAB(NUM)
+ON DELETE CASCADE 
+);
+
+
+외래키 수정
+ALTER TABLE AREPLYTAB
+ADD CONSTRAINT REPLY_BONUM FOREIGN KEY(BONUM)
+REFERENCES BOARDTAB(NUM)
+ON DELETE CASCADE 
+
+
+시퀀스 생성
+create sequence boardtab_num_seq nocache;
+create sequence replytab_renum_seq nocache;
+
+페이지별 리스트 출력 
+-----------------------------------
+1. select * from boardtab order by num desc;
+----------------------------------------------------
+2. select rownum as rnum, B.*  from (
+         select * from boardtab order by num desc) B
+    where rownum <= 5;
+ -----------------------------------------------------   
+3. select A.* from (
+      select rownum as rnum, B.*  from (
+          select * from boardtab
+          order by num desc) B
+   <![CDATA[
+      where rownum <= 5) A 
+   where A.rnum >=1;
+  ]]>
+--------------------------------------------------------
+
+
+------------------------------------------------
+검색시------------------------------------------
+select A.* from 
+     (select rownum as rnum , B.* from
+        ( select * from boardtab
+             where writer like '%김%'
+             order by  num desc ) B 
+            where rownum <= #end#) A
+       where A.rnum >= #start# 
+
+-------------검색을 위한 동적 조건부여------------------------------------
+<!-- 동적쿼리  -->
+<sql id="dynamicCondition">
+   <where>
+      <if test="!(stype == '' or sword == '')">
+           ${stype} like  '%'||#{sword}||'%'
+       </if>
+   </where>
+</sql>
+--------------------------------------
+ select A.* from 
+     (select rownum as rnum , B.* from
+        ( select * from boardtab
+          <include refid="dynamicCondition"/> 
+               order by  num desc ) B 
+    <![CDATA[
+          where rownum <= #end#) A
+       where A.rnum >= #start# 
+     ]]>            
+ </select>
+ -------------------------------------------------------
+전체 글갯수 구하기 
+ select count(*) from boardtab;
+
+조건에 따른 글 갯수 구하기
+ select count(*) from boardtab  where writer like '%김%';
+ select count(*) from boardtab  where subject like '%2%';
+ select count(*) from boardtab  where content like '%1%';
+
+글갯수 구하기위한   동적 조건부여
+ select count(*) from boardtab  <include refid="dynamicCondition"/> 
+
+insert 생성
+
+insert into boardtab values (boardtab_num_seq.nextval, '김제목1', '김은대', 'test1@test.com', '1234', '내용1', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '이제목2', '이쁜이', 'test2@test.com', '1234', '내용2', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '성제목3', '이쁜이', 'test3@test.com', '1234', '내용3', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '김제목4', '성윤미', 'test4@test.com', '1234', '내용4', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '이제목5', '김은대', 'test5@test.com', '1234', '내용5', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '김제목6', '신영남', 'test6@test.com', '1234', '내용6', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '이제목7', '김은대', 'test7@test.com', '1234', '내용7', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '신제목8', '김은대', 'test8@test.com', '1234', '내용8', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '신제목9', '이쁜이', 'test9@test.com', '1234', '내용9', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '김제목10', '이쁜이', 'test10@test.com', '1234', '내용10', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '김제목11', '신용환', 'test11@test.com', '1234', '내용11', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '이제목12', '이쁜이', 'test12@test.com', '1234', '내용12', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '이제목13', '성윤미', 'test13@test.com', '1234', '내용13', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '성제목14', '성윤미', 'test14@test.com', '1234', '내용14', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '신제목15', '김은대', 'test15@test.com', '1234', '내용15', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '신제목16', '이쁜이', 'test16@test.com', '1234', '내용16', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '김제목17', '이쁜이', 'test17@test.com', '1234', '내용17', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '김제목18', '신용환', 'test18@test.com', '1234', '내용18', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '이제목19', '김은대', 'test19@test.com', '1234', '내용19', 0, '000.000.000.000', sysdate);
+insert into boardtab values (boardtab_num_seq.nextval, '김제목20', '김은대', 'test20@test.com', '1234', '내용20', 0, '000.000.000.000', sysdate);
