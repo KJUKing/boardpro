@@ -39,21 +39,17 @@ public class MemberController extends HttpServlet {
 		///전송데이타 받기 
 		
 		//service객체 얻기 
-		IMemberService   service = MemberServiceImpl.getInstance();
+		IMemberService   service = MemberServiceImpl.getService();
 		
 		//service메소드 호출  - 결과값 받기 
 		List<MemberVO>  list = service.selectAllMember();
 		
 		//결과값을 request에 저장 
-		request.setAttribute("list", list);
+		request.setAttribute("qwesdsdf", list);
 		
 		//view페이지로 이동 
 		RequestDispatcher  disp = request.getRequestDispatcher("/비동기6_ajax/memberList.jsp");
 		disp.forward(request, response);
-		
-		
-		
-		
 	}
 
 	/**

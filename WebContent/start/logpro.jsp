@@ -13,7 +13,7 @@
 	/*  $(document).on('click', '#logout', () => { */
 	$('#logout').on('click', ()=>{		 
 		 $.ajax({
-			url : `${mypath}/logOutPro.do`,
+			url : `${mypath}/LogOutPro.do`,
 			type : 'get',
 			success : function(res){
 				
@@ -37,7 +37,7 @@
 		 
 		 
 		 $.ajax({
-				url : `${mypath}/logPro.do`,
+				url : `${mypath}/LogPro.do`,
 				type : 'post',
 				data : {"id" : idvalue , "pass"  : passvalue },
 				success : function(res){

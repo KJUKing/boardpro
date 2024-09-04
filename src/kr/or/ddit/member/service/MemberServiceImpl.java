@@ -1,30 +1,31 @@
 package kr.or.ddit.member.service;
 
+import java.util.List;
+
 import kr.or.ddit.member.dao.IMemberDao;
 import kr.or.ddit.member.dao.MemberDaoImpl;
 import kr.or.ddit.member.vo.MemberVO;
 import kr.or.ddit.member.vo.ZipVO;
 
-import java.util.List;
+public class MemberServiceImpl implements IMemberService {
 
-public class MemberServiceImpl implements IMemberService{
-
-	//dao메소드를 호출하기 위한 객체
-	private IMemberDao dao;
-
+	//dao메소드를 호출하기 위한 객체 
+	private IMemberDao   dao;
+	
+	//생성자 
 	private MemberServiceImpl() {
-		dao = MemberDaoImpl.getInstance();
+		dao = MemberDaoImpl.getDao();
 	}
-
-	//싱글톤
+	
+	//싱글톤 
 	private static IMemberService service;
 	
-	public static IMemberService getInstance() {
-		if(service == null) service = new MemberServiceImpl();
+	public static IMemberService getService() {
+		if(service == null)  service = new MemberServiceImpl();
 		
 		return service;
 	}
-
+	
 	@Override
 	public List<MemberVO> selectAllMember() {
 		//Dao 메소드 호출
@@ -57,6 +58,7 @@ public class MemberServiceImpl implements IMemberService{
 
 	@Override
 	public MemberVO loginSelect(MemberVO vo) {
+		// TODO Auto-generated method stub
 		return dao.loginSelect(vo);
 	}
 

@@ -14,12 +14,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
   
-  <script src="../js/jquery-3.6.4.min.js"></script>
+  <script src="../js/jquery-3.7.1.js"></script>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script src="../js/board.js"></script>
-   <script src="../js/jquery.serializejson.min.js"></script>
+  <script src="../js/jquery.serializejson.min.js"></script>
 
 <style>
 html, body {padding:-10; margin:-10; height:100%; width: 100%;   }
@@ -108,22 +108,85 @@ span.pa{
   vertical-align: bottom;
 }
 
-
 </style>
 
+<%
+    //로그인 상태
+    MemberVO vo = (MemberVO) session.getAttribute("loginok");
 
+    String ss = null;
+    Gson gson = new Gson();
+    if (vo != null) {
+        ss = gson.toJson(vo);
+        /*
+         ss = { "mem_id : "아이디" , "mem_pass" : "비밀번호" "mem_name" : "이름" }
+         */
+    }
+%>
 
 <script>
 //JSP 실행 순서가  Java =>  => HTML => javascript
- 
 
+//자바스크립트 객체 -동적으로 속성을 추가
+reply = {};
+
+uvo = <%= ss %>
 currentPage = 1;
 mypath =  '<%= request.getContextPath()%>';
 
 
 $(function(){
-	
-	
+
+    //js 파일 함수 호출
+    $.listPageServer();
+
+    //다음 버튼 이벤트
+    $(document).on('click', '#next', function () {
+        //나열되어있는 페이지 번호(pageno)들의 마지막 값을 가져오기
+        currentPage = parseInt($('.pageno').last().text()) +1;
+        $.listPageServer();
+        //$('.pageno:last);
+    });
+
+    //이전 버튼 이벤트
+    $(document).on('click', '#prev', function () {
+        currentPage = parseInt($('.pageno').first().text()) -1;
+        $.listPageServer();
+    });
+
+    //페이지번호클릭이벤트
+    $(document).on('click', '.pageno', function () {
+        currentPage = parseInt($(this).text());
+        $.listPageServer();
+    });
+    //검색어 입력 후 검색버튼 클릭이벤트
+    $(document).on('click', '#search', function () {
+        currentPage = 1;
+        $.listPageServer();
+    });
+
+    //수정, 삭제, 댓글쓰기
+    $(document).on('click', '.action', function () {
+        vname = $(this).attr('name');
+        vidx = $(this).attr('idx');
+
+        if (vname == "reply") {
+            //alert(vidx + "번째의 댓글을 답니다");
+            if (uvo == null) {
+                alert("로그인하세요");
+                return;
+            }
+            //저장할 데이터 수집
+            reply.bonum = vidx;
+            reply.name = uvo.mem_name;
+
+        }else if (vname == "modify") {
+            alert(vidx + "번째의 글을 수정합니다");
+        }else if (vname == "delete") {
+            alert(vidx + "번째의 글을 삭제합니다");
+        }
+    });
+
 })
 </script>
 
