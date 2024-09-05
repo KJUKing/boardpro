@@ -1,18 +1,89 @@
-$.listPageServer = function(){
+//댓글 리스트 가져오기
+$.replyListServer = function () {
 
-	stype = $("#stype option:selected").val().trim();
-	sword = $('#sword').val().trim();
-	
-	datas= {page : currentPage, stype :  stype , sword : sword  };
-	
-	code = '<div class="container mt-3">'
+    $.ajax({
+        url: `${mypath}/selectByReply.do`,
+        data: {bonum: vidx}, // {bonum : reply.bonum}
+        type: 'get',
+        success: res => {
+            console.log(res);
+            rcode = "";
+            //댓글 리스트 res를 출력
+            $.each(res, function (i, v) {
+                cont = v.cont;
+                cont = cont.replaceAll(/\n/g, "<br>");
+
+                rcode += `<div class="reply-body">
+            <div class="p12">
+                <p class="p1">
+                    작성자:<span class="rwr">${v.name}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    날짜 :<span class="rda">${v.redate}</span>
+                </p>
+                <p class="p2">`;
+
+                if (uvo != null && uvo.mem_name == v.name) {
+                    rcode += `<input idx="${v.renum}" type="button" value="댓글 수정" name="r_modify" class="action">
+                <input idx="${v.renum}" type="button" value="댓글 삭제" name="r_delete" class="action">`;
+                 }
+
+                rcode += `</p>
+             </div>
+            <p class="p3">
+              ${cont}
+            </p>
+        </div>`;
+
+            });//$each
+
+            //출력
+            //target변수는 제목, 등록을 클릭할때 this를 받은 변수
+            $(target).parents('.card').find('.reply-body').remove();
+            $(target).parents('.card').find('.card-body').append(rcode);
+        },//success
+        error: xhr => {
+            alert("오류 : " + xhr.status);
+        },
+        dataType: 'json'
+    });
+};
+
+
+//댓글 쓰기 요청 - 응답 - 출력
+$.replyWriteServer = function () {
+
+    $.ajax({
+        url: `${mypath}/insertReply.do`,
+        data: JSON.stringify(reply), // bonum : 19 , name : "김은대, cont : "내용"
+        contentType: 'application/json',
+        type: 'post',
+        success: res => {
+            //ok? 댓글 리스트 나오도록
+            $.replyListServer();
+        },
+        error: xhr => {
+            alert("오류 : " + xhr.status);
+        },
+        dataType: 'json'
+    })
+};
+
+
+//게시글 리스트 요청 - 응답 - 출력
+$.listPageServer = function () {
+
+    stype = $("#stype option:selected").val().trim();
+    sword = $('#sword').val().trim();
+
+    datas = {page: currentPage, stype: stype, sword: sword};
+
+    code = '<div class="container mt-3">'
     code += '<h2>Accordion Example</h2>'
     $.ajax({
         url: `${mypath}/BoardList.do`,
-		type : 'post',
-		data : JSON.stringify(datas),
-		contentType : 'application/json',
-		success : function(res){
+        type: 'post',
+        data: JSON.stringify(datas),
+        contentType: 'application/json',
+        success: function (res) {
 
             $.each(res.datas, function (i, v) {
 
@@ -22,7 +93,7 @@ $.listPageServer = function(){
                 cont = cont.replaceAll(/\n/g, "<br>")
                 code += `<div class="card">
                     <div class="card-header">
-                        <a class="btn" data-bs-toggle="collapse" href="#collapse${v.num}">
+                        <a class="btn action" idx="${v.num}" name="title" data-bs-toggle="collapse" href="#collapse${v.num}">
                             ${v.subject}
                         </a>
                     </div>
@@ -37,11 +108,11 @@ $.listPageServer = function(){
                                 </p>
                                 <p class ="p2">`
 
-                         if (uvo != null && uvo.mem_name == v.writer) {
-                            code += `<input idx="${v.num}" type="button"  value="수정" name="modify"  class="action">
+                if (uvo != null && uvo.mem_name == v.writer) {
+                    code += `<input idx="${v.num}" type="button"  value="수정" name="modify"  class="action">
                                 <input idx="${v.num}" type="button"  value="삭제" name="delete"  class="action">`
-                         }
-                            code += `</p>
+                }
+                code += `</p>
                             </div>
                             <p class="p3">
                                 ${cont}
@@ -67,14 +138,14 @@ $.listPageServer = function(){
             $('#pagelist').html(vpage);
 
 
-		},
-		error : function(xhr){
-			
-			alert("오류 : " + xhr.status);
-		},
-		dataType : 'json'
-		
-	})//ajax
+        },
+        error: function (xhr) {
+
+            alert("오류 : " + xhr.status);
+        },
+        dataType: 'json'
+
+    })//ajax
 
 
 }//$.listPageServer
@@ -85,9 +156,9 @@ $.pageList = function (sp, ep, tp) {
     pager = "";
     pager += '<ul class="pagination">';
     if (sp > 1) {
-       
+
         pager += `<li class="page-item"><a id="prev" class="page-link" href="#">Prev</a></li>`;
-		//pager += `<li className="page-item"><a id="prev" className="page-link" href="#">Prev</a></li>`;
+        //pager += `<li className="page-item"><a id="prev" className="page-link" href="#">Prev</a></li>`;
     }
     //페이지번호
     for (i = sp; i <= ep; i++) {

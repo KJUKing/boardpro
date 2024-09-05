@@ -1,8 +1,10 @@
 package kr.or.ddit.board.dao;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.ddit.board.vo.ReplyVO;
 import org.apache.ibatis.session.SqlSession;
 
 import kr.or.ddit.board.vo.BoardVO;
@@ -61,6 +63,49 @@ public class BoardDaoImpl implements IBoardDao {
 		
 		//3 리턴 
 		return cnt;
+	}
+
+	@Override
+	public int insertReply(ReplyVO vo) {
+		//1. 선언
+		int  cnt = 0;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			cnt = sql.insert("reply.insertReply", vo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+		System.out.println("cnt : " + cnt);
+
+		//3 리턴
+		return cnt;
+	}
+
+	@Override
+	public List<ReplyVO> selectByReply(int bonum) {
+		//1. 선언
+		List<ReplyVO>  list = null;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			list = sql.selectList("reply.selectByReply", bonum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+
+		//3 리턴
+		return list;
 	}
 
 }

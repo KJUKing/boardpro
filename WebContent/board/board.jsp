@@ -165,8 +165,11 @@ $(function(){
         $.listPageServer();
     });
 
-    //수정, 삭제, 댓글쓰기
+    //수정, 삭제, 댓글쓰기, 댓글리스트(제목, 등록). 댓글수정 댓글삭제
     $(document).on('click', '.action', function () {
+
+        target = $(this);
+
         vname = $(this).attr('name');
         vidx = $(this).attr('idx');
 
@@ -176,14 +179,25 @@ $(function(){
                 alert("로그인하세요");
                 return;
             }
+            vcont = $(this).prev().val().trim();
+
             //저장할 데이터 수집
             reply.bonum = vidx;
             reply.name = uvo.mem_name;
+            reply.cont = vcont;
+
+            //전송 - board.js함수 호출
+            $.replyWriteServer();
 
         }else if (vname == "modify") {
             alert(vidx + "번째의 글을 수정합니다");
         }else if (vname == "delete") {
             alert(vidx + "번째의 글을 삭제합니다");
+        }else if (vname == "title") {
+            //vidx에 관련된 댓글 리스트 가져오기
+            $.replyListServer()
+            //조회수 증가하기
+
         }
     });
 
