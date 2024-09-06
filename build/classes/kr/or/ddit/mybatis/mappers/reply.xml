@@ -15,5 +15,14 @@
     <insert id="insertReply" parameterType="replyVO">
         insert into replytab values(replytab_renum_seq.nextval, #{bonum}, #{name}, #{cont}, sysdate)
     </insert>
-
+<!--    댓글 삭제-->
+    <delete id="deleteReply" parameterType="int">
+        delete from replytab where renum = #{data}
+    </delete>
+<!--    댓글 수정-->
+    <update id="updateReply" parameterType="replyVO">
+        update replytab set
+            cont = #{cont}
+        where renum = #{renum}
+    </update>
 </mapper>

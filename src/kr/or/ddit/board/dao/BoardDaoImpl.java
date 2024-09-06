@@ -66,6 +66,86 @@ public class BoardDaoImpl implements IBoardDao {
 	}
 
 	@Override
+	public int insertBoard(BoardVO board) {
+		//1. 선언
+		int  cnt = 0;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			cnt = sql.insert("board.insertBoard", board);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+
+		//3 리턴
+		return cnt;
+	}
+
+	@Override
+	public int deleteBoard(int num) {
+		int  cnt = 0;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			cnt = sql.delete("board.deleteBoard", num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+
+		return cnt;
+	}
+
+	@Override
+	public int updateBoard(BoardVO vo) {
+		//1. 선언
+		int  cnt = 0;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			cnt = sql.update("board.updateBoard", vo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+
+		return cnt;
+	}
+
+	@Override
+	public int updateHit(int num) {
+		//1. 선언
+		int  cnt = 0;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			cnt = sql.update("board.updateHit", num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+
+		return cnt;
+	}
+
+	@Override
 	public int insertReply(ReplyVO vo) {
 		//1. 선언
 		int  cnt = 0;
@@ -84,6 +164,45 @@ public class BoardDaoImpl implements IBoardDao {
 		System.out.println("cnt : " + cnt);
 
 		//3 리턴
+		return cnt;
+	}
+
+	@Override
+	public int updateReply(ReplyVO vo) {
+		//1. 선언
+		int  cnt = 0;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			cnt = sql.update("reply.updateReply", vo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+
+		return cnt;
+	}
+
+	@Override
+	public int deleteReply(int num) {
+		int  cnt = 0;
+		SqlSession   sql = null;
+
+		//2실행
+		try {
+			sql = MybatisUtil.getSqlSession();
+			cnt = sql.delete("reply.deleteReply", num);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			sql.commit();
+			sql.close();
+		}
+
 		return cnt;
 	}
 

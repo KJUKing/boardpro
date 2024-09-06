@@ -43,7 +43,11 @@ public class BoardServiceImpl implements IBoardService {
 		//전체페이지수 구하기 
 		int perList = PageVO.getPerList();
 		int totalPage =  (int)Math.ceil(count / (double)perList);
-		
+
+		//마지막페이지7에서 마지막 데이터를 지웠을때
+		//Page변수는 7(마지막 페이지) - totalPage = 6으로 바뀜
+		if(page > totalPage) page = totalPage;
+
 		//start, end 
 		int start = (page-1) * perList + 1;
 		int end = start + perList - 1;
@@ -79,8 +83,38 @@ public class BoardServiceImpl implements IBoardService {
 	}
 
 	@Override
+	public int insertBoard(BoardVO board) {
+		return dao.insertBoard(board);
+	}
+
+	@Override
+	public int deleteBoard(int num) {
+		return dao.deleteBoard(num);
+	}
+
+	@Override
+	public int updateBoard(BoardVO vo) {
+		return dao.updateBoard(vo);
+	}
+
+	@Override
+	public int updateHit(int num) {
+		return dao.updateHit(num);
+	}
+
+	@Override
 	public int insertReply(ReplyVO vo) {
 		return dao.insertReply(vo);
+	}
+
+	@Override
+	public int updateReply(ReplyVO vo) {
+		return dao.updateReply(vo);
+	}
+
+	@Override
+	public int deleteReply(int num) {
+		return dao.deleteReply(num);
 	}
 
 	@Override

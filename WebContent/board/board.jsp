@@ -190,16 +190,66 @@ $(function(){
             $.replyWriteServer();
 
         }else if (vname == "modify") {
-            alert(vidx + "번째의 글을 수정합니다");
+            //alert(vidx + "번째의 글을 수정합니다");
+
         }else if (vname == "delete") {
-            alert(vidx + "번째의 글을 삭제합니다");
+            //alert(vidx + "번째의 글을 삭제합니다");
+            //함수호출
+            $.deleteBoardServer()
+
         }else if (vname == "title") {
             //vidx에 관련된 댓글 리스트 가져오기
             $.replyListServer()
-            //조회수 증가하기
-
+            //조회수 증가하기 - 함수 호출
+            vhit = $(this).attr('aria-expanded');
+            if(vhit == "true"){
+            	$.updateHitServer();
+            }
+        }else if (vname == "r_modify") {
+            alert(vidx + "댓글을 수정합니다");
+        }else if (vname == "r_delete") {
+            alert(vidx + "댓글을 삭제합니다");
         }
-    });
+    }); //action이벤트
+
+    //글쓰기 이벤트
+    $('#write').on('click', function(){
+
+        if (uvo == null) {
+            alert("로그인 하세요.");
+            return;
+        }
+        //모달 이름에 로그인 한 사람의 이름을 출력
+        $('#writer').val(uvo.mem_name);
+
+        //모달이름 수정 할 수 없도록
+        $('#writer').prop('readonly', true);
+
+        //모달창 보이기
+        $('#wModal').modal('show');
+    })
+    //글쓰기 입력후 전송버튼 클릭
+    $('#send').on('click', function () {
+        //입력한 모든 내용 가져오기
+        fdata1 = $('#wform').serialize();
+        fdata2 = $('#wform').serializeArray();
+        fdata3 = $('#wform').serializeJSON();
+
+        console.log(fdata1);
+        console.log(fdata2);
+        console.log(fdata3);
+
+        //함수 호출
+        $.boardWriteServer();
+        // location.href="main" 위호출은 비동기호출이기떄문에
+        // 성공하든 실패하든 메인으로가버려서 이렇게 쓰면안된다
+
+        //모달창 내용 지우기
+        $('#wModal .txt').val("");
+        //모달창 닫기
+        $('#wModal').modal('hide');
+
+    });//이
 
 })
 </script>

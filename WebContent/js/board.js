@@ -1,3 +1,70 @@
+
+//게시글 삭제
+$.deleteBoardServer = function () {
+    //$.get(url, data, success, dataType);
+    //$.getJSON(url, data, success)
+
+    $.getJSON(
+        `${mypath}/deleteBoard.do`,
+        {num: vidx},
+        function (res) {
+            //alert(res.flag)
+            //리스트
+            $.listPageServer(); //이건 그페이지만
+
+        }
+    );
+};
+
+
+//게시글 쓰기
+$.boardWriteServer = function () {
+
+    $.ajax({
+        url : `${mypath}/insertBoard.do`,
+        data : JSON.stringify(fdata3),
+        type : 'post',
+        contentType : 'application/json',
+        success : res => {
+            //alert(res.flag);
+            //리스트페이지 혹은 메인
+            $.listPageServer() //이건 그페이지만
+            // location.href=`${mypath}/start/index.jsp`; 이건전체바꾸기
+        },
+        error : xhr => {
+            alert("오류 : " + xhr.status);
+        },
+        dataType : 'json'
+    })
+};
+
+//조회수 증가하기
+$.updateHitServer = function () {
+
+    $.ajax({
+        url : `${mypath}/updateHit.do`,
+        data : {num : vidx},
+        type : 'get',
+        success: res => {
+            //alert(res.flag);
+            //ok이면 화면을 수정 - target
+            //화면수정 - 조회수 부분 검색
+            vhi = $(target).parents('.card').find('.hi');
+
+            //조회수의 값을 가져온다
+            hivalue = parseInt(vhi.text().trim()) + 1;
+
+            //화면의 조회수 부분을 수정한다
+            vhi.text(hivalue);
+        },
+        error : xhr => {
+            alert("오류 : " + xhr.status);
+        },
+        dataType : 'json'
+    })
+};
+
+
 //댓글 리스트 가져오기
 $.replyListServer = function () {
 
@@ -103,7 +170,7 @@ $.listPageServer = function () {
                                 <p class="p1">
                                     작성자:<span class="wr">${v.writer}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     이메일:<span class="em">${v.mail}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    조회수:<span class="hi">0</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    조회수:<span class="hi">${v.hit}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     날짜 :<span class="da">${v.wdate}</span>
                                 </p>
                                 <p class ="p2">`
