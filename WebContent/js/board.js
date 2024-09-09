@@ -1,4 +1,66 @@
 
+//댓글 삭제
+$.deleteReply = function () {
+
+    $.getJSON(
+        `${mypath}/deleteReply.do`,
+        {renum: vidx},
+        res => {
+            // alert(res.flag);
+//ok면 현화면에서 reply-body지우기 -remove()
+            $(target).parents('.reply-body').remove();
+
+
+        }
+
+    );
+};
+
+//게시글 수정
+$.updateBoardServer = function () {
+    //$.post(url, data, success, dataType);
+
+    $.ajax({
+        url: `${mypath}/updateBoard.do`,
+        data: JSON.stringify(udata),
+        type: 'post',
+        contentType: 'application/json',
+        success: res => {
+            // alert(res.flag);
+            // ok면 화면수정 modal창 갖고오기
+            //모달창에 출력한다
+
+            //모달에 입력한 내용 가져오기 - writer num password 제외
+            // vsub = $('#usubject').val();
+            // vm = $('#umail').val();
+            // vc = $('#ucontent').val();
+
+            vsub = udata.subject;
+            vm = udata.mail;
+            vc = udata.content;
+            //원글본문에 내용을 변경
+            $(vcard).find('a').text(vsub);
+
+            $(vcard).find('.em').text(vm);
+            $(vcard).find('.em').text(vm);
+
+            vc = vc.replaceAll(/\n/g, "<br>");
+            $(vcard).find('.p3').html(vc);
+
+            // //모달창에 입력된 내용 지우고
+            // $('#uform .txt').val("");
+            // //모달창 닫기
+            // $('#uModal').modal('hide');
+
+        },
+        error: xhr => {
+            alert("오류 : " + xhr.status);
+        },
+        dataType: 'json'
+    });
+};
+
+
 //게시글 삭제
 $.deleteBoardServer = function () {
     //$.get(url, data, success, dataType);
@@ -95,7 +157,7 @@ $.replyListServer = function () {
 
                 rcode += `</p>
              </div>
-            <p class="p3">
+            <p class="rp3">
               ${cont}
             </p>
         </div>`;
@@ -227,6 +289,10 @@ $.pageList = function (sp, ep, tp) {
         pager += `<li class="page-item"><a id="prev" class="page-link" href="#">Prev</a></li>`;
         //pager += `<li className="page-item"><a id="prev" className="page-link" href="#">Prev</a></li>`;
     }
+
+    //currentPage = 7(마지막페이지) 마지막페이지의 모든 데이터 삭제할 경우
+    //currentPage의 값이 새로구한 totalPage로 변경되어야한다
+    if(currentPage > tp) currentPage = tp;
     //페이지번호
     for (i = sp; i <= ep; i++) {
         if (currentPage == 1) {

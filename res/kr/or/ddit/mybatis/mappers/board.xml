@@ -62,8 +62,9 @@
     <!--    글 수정-->
     <update id="updateBoard" parameterType="boardVO">
         update boardtab
-        set subject = #{subject} mail = #{mail}
-            content = #{content}
+        set subject = #{subject},
+            mail = #{mail},
+            content = #{content},
             password = #{password}
         where num = #{num}
 

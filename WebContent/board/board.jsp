@@ -189,8 +189,34 @@ $(function(){
             //전송 - board.js함수 호출
             $.replyWriteServer();
 
+            $(this).prev().val("");
+            // $(this).closest('.card-body').find('textarea').val("");
+
         }else if (vname == "modify") {
             //alert(vidx + "번째의 글을 수정합니다");
+
+            //원글의 내용을 가져온다
+            //수정 버튼을 기준으로 공통조상 찾기
+            vcard = $(this).parents('.card');
+            vtitle = $(vcard).find('a').text().trim();
+            vname = $(vcard).find('.wr').text().trim();
+            vmail = $(vcard).find('.em').text().trim();
+            vcont = $(vcard).find('.p3').html().trim(); //<br> 태그가 포함
+
+            vcont = vcont.replaceAll(/<br>/g, "")
+
+            //모달창에 출력한다
+            $('#uwriter').val(vname);
+            $('#usubject').val(vtitle);
+            $('#umail').val(vmail);
+            $('#ucontent').val(vcont);
+            $('#unum').val(vidx);
+
+            //이름 수정 불가
+            $('#uwriter').prop('readonly', true);
+
+            //모달창 실행
+            $('#uModal').modal('show');
 
         }else if (vname == "delete") {
             //alert(vidx + "번째의 글을 삭제합니다");
@@ -206,11 +232,56 @@ $(function(){
             	$.updateHitServer();
             }
         }else if (vname == "r_modify") {
-            alert(vidx + "댓글을 수정합니다");
+            // alert(vidx + "댓글을 수정합니다");
+
+            //버튼(this)기준으로 rp3을 찾는다
+            vp3 = $(this).parents('.reply-body').find('.rp3')
+            //원래 댓글 내용을 가져온다 = <br>태그가 포함
+            //원래 내용을 보관하고 있어야한다 << 취소버튼의 복구기능때문에
+            modifycont = vp3.html().trim();
+            //<br>태그를 \n으로 변경
+            mcont = modifycont.replaceAll(/<br>/g, "\n");
+            //수정폼의 textarea에 출력
+            $('#modifyform textarea').val(mcont );
+            //수정폼을 rp3으로 이동(append) - body의 수정폼은 없어진다
+            $(vp3).empty().append($('#modifyform'));
+            //수정폼을 보이게한다
+            $('#modifyform').show();
+
+
         }else if (vname == "r_delete") {
-            alert(vidx + "댓글을 삭제합니다");
+            // alert(vidx + "댓글을 삭제합니다");
+
+            // js함수 호출
+            $.deleteReply();
         }
     }); //action이벤트
+
+    //댓글수정 폼 취소버튼 클릭했을때
+    $('#btnreset').on('click', function () {
+
+    });
+
+    //댓글수정 폼에서 확인버튼 눌렀을때
+    $('#btnok').on('click', function () {
+
+    });
+
+    //수정 모달창에서 전송 버튼 클릭
+    $('#usend').on('click', function () {
+        //입력한 모든 값을 가져온다
+        udata = $('#uform').serializeJSON();
+        console.log(udata);
+
+        $.updateBoardServer();
+        //화면 수정 - 서버로 전송 - db수정이 완료된 후에 실행 - 비동기 실행시 success를 콜백
+
+        //모달창에 입력된 내용 지우고
+        $('#uform .txt').val("");
+        // //모달창 닫기
+        $('#uModal').modal('hide');
+        //서버로 전송 js함수 호출
+    });
 
     //글쓰기 이벤트
     $('#write').on('click', function(){
