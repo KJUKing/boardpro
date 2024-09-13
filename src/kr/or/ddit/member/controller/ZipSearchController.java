@@ -56,7 +56,7 @@ public class ZipSearchController extends HttpServlet {
 		request.setAttribute("list", list);
 		
 		//view패이지로 이동 
-		request.getRequestDispatcher("/비동기6_ajax/dongList.jsp").forward(request, response);
+		request.getRequestDispatcher("/member/dongList.jsp").forward(request, response);
 		
 	}
 

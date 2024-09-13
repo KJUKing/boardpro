@@ -66,10 +66,10 @@ public class BoardList extends HttpServlet {
 		map.put("stype", vo.getStype());
 		map.put("sword", vo.getSword());
 		
-		//list가져오기 -메소드 호추 ㄹ
+		//list가져오기 -메소드 호출
 		List<BoardVO> list = service.selectBoardList(map);
 		
-		//결곽밧을 request에 저장 
+		//결과값을 request에 저장 
 		request.setAttribute("list", list);
 		request.setAttribute("startPage", pvo.getStartPage());
 		request.setAttribute("endPage", pvo.getEndPage());

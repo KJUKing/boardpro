@@ -13,7 +13,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  
+
   <script src="../js/jquery-3.7.1.js"></script>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -234,15 +234,23 @@ $(function(){
         }else if (vname == "r_modify") {
             // alert(vidx + "댓글을 수정합니다");
 
+            //댓글 수정 폼이 이미 어딘가에 열려있는지 검사
+            //만약 열려있다면 body로 수정폼을 반납하고 다시가져와야함
+            //반납시에는 원래내용을 rp3에 그대로출력
+            if ($('#modifyform').css('display') != "none") {
+                //수정폼이 어딘가에 이미 열려있다
+                replyReset();
+            }
+
             //버튼(this)기준으로 rp3을 찾는다
-            vp3 = $(this).parents('.reply-body').find('.rp3')
+            vp3 = $(this).parents('.reply-body').find('.rp3');
             //원래 댓글 내용을 가져온다 = <br>태그가 포함
             //원래 내용을 보관하고 있어야한다 << 취소버튼의 복구기능때문에
             modifycont = vp3.html().trim();
             //<br>태그를 \n으로 변경
             mcont = modifycont.replaceAll(/<br>/g, "\n");
             //수정폼의 textarea에 출력
-            $('#modifyform textarea').val(mcont );
+            $('#modifyform textarea').val(mcont);
             //수정폼을 rp3으로 이동(append) - body의 수정폼은 없어진다
             $(vp3).empty().append($('#modifyform'));
             //수정폼을 보이게한다
@@ -260,11 +268,38 @@ $(function(){
     //댓글수정 폼 취소버튼 클릭했을때
     $('#btnreset').on('click', function () {
 
+        replyReset();
     });
+
+    replyReset = function () {
+        //수정폼을 기준으로 rp3을 찾는다
+        vrp3 = $('#modifyform').parent();
+        //수정폼을 body로 이동 - append
+        $('#modifyform').appendTo($('body'))
+        //수정폼을 안보이도록 설정
+        $('#modifyform').hide();
+        //원래 내용을- modifycont(댓글 수정 클릭시) 다시 rp3으로 출력
+        $(vrp3).html(modifycont);
+    };
 
     //댓글수정 폼에서 확인버튼 눌렀을때
     $('#btnok').on('click', function () {
+        //새롭게 입력된(수정내용)을 가져온다 - 서버로 전송할 내용(db에 저장) - 엔터가 포함
 
+        modicont = $('#modifyform textarea').val();
+        //엔터를 <br>태그로 바꾼다 - 화면에 변경할 내용 - db저장 성공후 success콜백에서 실행
+        modiout = modicont.replaceAll(/\n/g, "<br>");
+        //수정폼을 기준으로 rp3을 검색한다
+        vp3 = $('#modifyform').parent();
+        // $(vp3).html(modiout); //화면변경 -> success콜백에서실행한다
+        //수정폼을 body로 보낸다 - 안보이도록 설정
+        $('body').append($('#modifyform'));
+        $('#modifyform').hide();
+        //서버로 전송할 data수집
+        reply.cont = modicont;
+        reply.renum = vidx;
+        //js함수 호출
+        $.replyUpdateServer();
     });
 
     //수정 모달창에서 전송 버튼 클릭
